@@ -176,6 +176,7 @@ class PPOAgent:
 
         low, high = -1.0, 1.0 # -1 and 1 are boundaries of tanh
         action = pred + np.random.uniform(low, high, size=pred.shape) * self.std
+        print(action)
         action = np.clip(action, low, high)
         
         logp_t = self.gaussian_likelihood(action, pred, self.log_std)
@@ -280,7 +281,7 @@ class PPOAgent:
             pylab.xlabel('Steps', fontsize=18)
             try:
                 pylab.grid(True)
-                pylab.savefig(self.env_name+".png")
+                pylab.savefig(self.modelname+".png")
             except OSError:
                 pass
         # saving best models
@@ -418,7 +419,7 @@ class PPOAgent:
             while not done:
                 self.env.render()
                 action = self.Actor.predict(state)[0]
-                state, reward, done, _ = self.env.step(action)
+                state, reward, done, _ = self.env.step(action[0])
                 state = np.reshape(state, [1, self.state_size[0]])
                 score += reward
                 if done:
@@ -433,7 +434,7 @@ if __name__ == "__main__":
     env_name = 'BipedalWalkerHardcore-v3'
     # filepath = 'Teachers/'
     # model_name = 'Slow'
-    agent = PPOAgent(env_name, filepath='Teachers/',modelname='Agent_2')
+    agent = PPOAgent(env_name, filepath='Teachers/',modelname='Agent_3')
     # agent.run_batch() # train as PPO
     agent.run_multiprocesses(num_worker = 8)  # train PPO multiprocessed (fastest)
     agent.test()
